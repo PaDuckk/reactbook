@@ -5,7 +5,9 @@ import TodoItem from '../TodoItem'
 
 class TodoList extends Component {
 
-    
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.todos !== nextProps.todos;
+    }
     render() {
         const { todos, onToggle, onRemove } = this.props;
         const todoList = todos.map(
