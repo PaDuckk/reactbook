@@ -22,25 +22,30 @@ const initialState = List([
     })
 ])
 
-export default handleActions({
-    [INSERT]:(state, action) => {
-        const {id, text, done} = action.payload;
 
-        return state.push(Map({
-            id,
-            text,
-            done
-        }));
-    },
-    [TOGGLE]:(state, action) => {
-        const {payload:index} = action;
+const a = handleActions({
+  [INSERT]:(state, action) => {
+      const {id, text, done} = action.payload;
 
-        return state.updateIn([index, 'done'], done => !done);
-    },
-    [REMOVE]:(state, action) => {
-        const {payload:index} = action;
+      return state.push(Map({
+          id,
+          text,
+          done
+      }));
+  },
+  [TOGGLE]:(state, action) => {
+      const {payload:index} = action;
 
-        return state.delete(index);
-    },
+      return state.updateIn([index, 'done'], done => !done);
+  },
+  [REMOVE]:(state, action) => {
+      const {payload:index} = action;
+
+      return state.delete(index);
+  },
 
 }, initialState);
+
+console.log({a})
+
+export default a;

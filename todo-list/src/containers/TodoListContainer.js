@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import * as todosActions from '../modules/todos';
 
+console.log(todosActions)
 class TodoListContainer extends Component {
   handleToggle = id => {
     const { TodosActions } = this.props;
