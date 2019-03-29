@@ -34,4 +34,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default withRouter(Menu);
