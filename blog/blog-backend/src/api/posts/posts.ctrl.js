@@ -1,142 +1,137 @@
-let postId = 1; // id 초기값
+const Post = require('models/post');
+const {
+  ObjectId
+} = require('mongoose').Types;
+const Joi = require('joi');
 
-const posts = [{
-  id: 1,
-  title: '제목',
-  body: '내용'
-}]
+exports.checkObjectId = (ctx, next) => {
+  const {
+    id
+  } = ctx.params;
+
+  if (!ObjectId.isValid(id)) {
+    ctx.status = 400;
+    return null;
+  }
+
+  return next();
+}
+
 
 /* 포스트 작성
   POST /api/posts
-  { title, body }
+  { title, body, tags }
 */
 
-exports.write = (ctx) => {
+exports.write = async (ctx) => {
+  const schema = Joi.object().keys({
+    title: Joi.string().required(),
+    body: Joi.string().required(),
+    tags: Joi.array().items(Joi.string()).required()
+  });
+
+  // 첫 번째는 파라미터는 검증할 객체, 두번재는 스키마
+  const result = Joi.validate(ctx.request.body, schema);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error;
+    return;
+  }
   const {
     title,
-    body
+    body,
+    tags
   } = ctx.request.body;
 
-  postId += 1;
-
-  const post = {
-    id: postId,
+  const post = new Post({
     title,
-    body
-  };
+    body,
+    tags
+  });
 
-  posts.push(post);
-  ctx.body = post;
+  try {
+    await post.save();
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(e, 500);
+  }
 }
 
 /* 포스트 목록 조회
    GET /api/posts
 */
 
-exports.list = (ctx) => {
-  ctx.body = posts;
+exports.list = async (ctx) => {
+  try {
+    const posts = await Post.find().exec();
+    ctx.body = posts;
+  } catch (e) {
+    ctx.throw(e, 500);
+  }
 }
 
 /* 특정 포스트 조회
    GET /api/posts/:id
 */
-exports.read = (ctx) => {
+exports.read = async (ctx) => {
   const {
     id
   } = ctx.params;
 
-  const post = posts.find(p => p.idtoString() === id);
+  try {
+    const post = await Post.findById(id).exec();
 
-  // 포스트가 없으면 오류를 반환합니다.
-  if (!post) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.'
-    };
-    return;
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(e, 500);
   }
-
-  ctx.body = post;
 }
 
 /* 특정 포스트 제거
    DELETE /api/posts/:id
 */
 
-exports.remove = (ctx) => {
+exports.remove = async (ctx) => {
   const {
     id
   } = ctx.params;
-
-  const index = posts.findIndex(p => p.id.toString() === id);
-
-  // 포스트가 없으면 오류를 반환
-
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.'
-    }
-
-    return;
+  try {
+    await Post.findByIdAndRemove(id).exec();
+    ctx.status = 204;
+  } catch (e) {
+    ctx.throw(e, 500);
   }
-
-  posts.splice(index, 1);
-  ctx.status = 204; //No Content
 }
 
-/* 포스트 수정(교체)
-  PUT /api/posts/:id
-  { title, body }
-*/
-
-exports.replace = (ctx) => {
-  const {
-    id
-  } = ctx.params;
-
-  const index = posts.findIndex(p => p.id.toString() === id);
-
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재하지 않습니다.'
-    };
-    return;
-  }
-
-  posts[index] = {
-    id,
-    ...ctx.request.body
-  };
-
-  ctx.body = posts[index];
-};
 
 /* 포스트 수정 (특정 필드 변경)
   PATCH /api/posts/:id
   { title, body }
 */
 
-exports.update = (ctx) => {
+exports.update = async (ctx) => {
   const {
     id
   } = ctx.params;
 
-  const index = posts.findIndex(p => p.id.toString() === id);
+  try {
 
-  if (index === -1) {
-    ctx.status = 404;
-    ctx.body = {
-      message: '포스트가 존재 하지 않습니다.'
+    // 3번째 인자는 option객체 new true해주지 않으면 이전 객체가 반환 되어짐
+
+    const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
+      new: true
+    }).exec();
+
+    if (!post) {
+      ctx.status = 404;
+      return;
     }
-    return;
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(e, 500);
   }
-
-  posts[index] = {
-    ...posts[index],
-    ...ctx.request.body
-  };
-
-  ctx.body = posts[index];
 }
