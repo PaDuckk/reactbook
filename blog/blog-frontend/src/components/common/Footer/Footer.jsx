@@ -1,7 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
-//import { Test } from './Footer.styles';
+import styles from "./Footer.scss";
+import classNames from "classnames/bind";
+import { Link } from "react-router-dom";
 
-const Footer = props => <div className="FooterWrapper">Test content</div>;
+const cx = classNames.bind(styles);
+
+const Footer = () => (
+  <footer className={cx("footer")}>
+    <Link to="/" className={cx("brand")}>
+      reactblog
+    </Link>
+    <div className={cx("admin-login")}>관리자 로그인</div>
+  </footer>
+);
 
 export default Footer;
