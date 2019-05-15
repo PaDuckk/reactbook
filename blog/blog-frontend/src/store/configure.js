@@ -18,3 +18,5 @@ const configure = preloadedState =>
     preloadedState,
     composeEnhancers(applyMiddleware(...middlewares))
   );
+
+export default configure;
