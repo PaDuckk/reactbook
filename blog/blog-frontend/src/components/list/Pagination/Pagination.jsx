@@ -1,19 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-//import { Test } from './Pagination.styles';
+import React from "react";
+import styles from "./Pagination.scss";
+import classNames from "classnames/bind";
+import Button from "components/common/Button";
 
-const Pagination = (props) => (
-  <div className="PaginationWrapper">
-    Test content
+const cx = classNames.bind(styles);
+
+const Pagination = () => (
+  <div className={cx("pagination")}>
+    <Button disabled>이전 페이지</Button>
+    <div className={cx("number")}>페이지1</div>
+    <Button>다음 페이지</Button>
   </div>
 );
-
-Pagination.propTypes = {
-  // bla: PropTypes.string,
-};
-
-Pagination.defaultProps = {
-  // bla: 'test',
-};
 
 export default Pagination;
