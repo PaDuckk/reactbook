@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.46.0",
     "immutable": "^4.0.0-rc.12",
@@ -40,5 +41,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "https://localhost:4000"
 }
