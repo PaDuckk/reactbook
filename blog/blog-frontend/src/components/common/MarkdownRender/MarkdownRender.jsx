@@ -56,6 +56,10 @@ class MarkdownRender extends PureComponent {
     }
   }
 
+  componentDidMount() {
+    Prism.highlightAll();
+  }
+
   render() {
     const { html } = this.state;
 

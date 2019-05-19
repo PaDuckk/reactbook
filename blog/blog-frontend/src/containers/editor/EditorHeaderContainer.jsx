@@ -45,7 +45,7 @@ export default connect(
     title: state.editor.get("title"),
     markdown: state.editor.get("markdown"),
     tags: state.editor.get("tags"),
-    postId: state.editor.get("postId)")
+    postId: state.editor.get("postId")
   }),
   dispatch => ({
     EditorActions: bindActionCreators(editorActions, dispatch)
